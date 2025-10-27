@@ -16,7 +16,6 @@ AS5600Handle_Typedef *AS5600_Create()
 	{
 		return NULL;
 		printf("calloc fail");
-		//test change a
 	}
 
 	return pAS;
