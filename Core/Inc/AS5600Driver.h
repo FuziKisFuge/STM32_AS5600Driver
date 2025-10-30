@@ -54,10 +54,19 @@
 #define AS5600_REGISTER_MAGNITUDE_LOW 0x1C
 #define AS5600_REGISTER_BURN 0xFF
 
+//Bit poziciók
+#define AS5600_MD_BITSHIFT	5
+#define AS5600_ML_BITSHIFT	4
+#define AS5600_MH_BITSHIFT	3
+
 //Bitmaszkok
 #define 	AS5600_RAW_ANGLE_UPPER_8_BIT_MASK	0b00001111
 #define 	AS5600_RAW_ANGLE_LOWER_8_BIT_MASK	0b11111111
 #define		AS5600_RAW_ANGLE_16_BIT_MASK		0b0000111111111111
+
+#define 	AS5600_MD_BIT_MASK	0b00100000
+#define 	AS5600_ML_BIT_MASK	0b00010000
+#define 	AS5600_MH_BIT_MASK	0b00001000
 
 typedef struct
 {
@@ -112,6 +121,8 @@ typedef struct{
 
 
 
-AS5600Handle_Typedef *AS5600_Create();
+AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,uint8_t i2cAddr);
+void AS5600_ReadRawAngle(AS5600Handle_Typedef *pAS);
+void AS5600_UpdateStatus(AS5600Handle_Typedef *pAS);
 
 #endif /* INC_AS5600DRIVER_H_ */

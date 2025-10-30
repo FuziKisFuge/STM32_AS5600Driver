@@ -18,6 +18,8 @@ void uart_printf(UART_HandleTypeDef *huart, const char *format, ...) {
     HAL_UART_Transmit_IT(huart, (uint8_t*)buffer, strlen(buffer));
 }
 
+
+
 /*
 void uart_printf(const char *format, ...) {
     char buffer[128];
@@ -26,6 +28,7 @@ void uart_printf(const char *format, ...) {
     vsnprintf(buffer, sizeof(buffer), format, args);
     va_end(args);
 
-    HAL_UART_Transmit_IT(&huart1, (uint8_t*)buffer, strlen(buffer));
+    uart_printf(&huart1, buffer);
 }
+
 */
