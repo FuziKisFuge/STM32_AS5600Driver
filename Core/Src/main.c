@@ -19,17 +19,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "AS5600Driver.h"
-#include "uartcomm.h"
-
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include <stdarg.h>
-#include <stdlib.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -99,6 +91,7 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
   Encoder1 = AS5600_Create(&hi2c1, 0x36);
@@ -118,15 +111,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  AS5600_UpdateStatus(Encoder1);
 
-	  if (Encoder1->Status.MagnetDetected)
-	  {
-		  uart_printf(&huart1, "Magnet detected");
-	  }
+	  AS5600_ReadAngle(Encoder1);
+	  uart_printf("%d", Encoder1->Angle);
 
 	  HAL_GPIO_TogglePin(GPIOC, LD3_Pin);
-	  HAL_Delay(100);
+	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

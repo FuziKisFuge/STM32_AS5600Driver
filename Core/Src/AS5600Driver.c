@@ -35,6 +35,13 @@ void AS5600_ReadRawAngle(AS5600Handle_Typedef *pAS)
 	pAS->RawAngle = 0x0FFF & ((temp[0] << 8) & temp[1]);
 }
 
+void AS5600_ReadAngle(AS5600Handle_Typedef *pAS)
+{
+	uint8_t temp[2];
+	HAL_I2C_Mem_Read(pAS->hi2c, (pAS->I2CAddress << 1), AS5600_REGISTER_ANGLE_HIGH, 1, temp, 2, 1000);
+
+	pAS->Angle = 0x0FFF & ((temp[0] << 8) | temp[1]);
+}
 
 
 void AS5600_UpdateStatus(AS5600Handle_Typedef *pAS)

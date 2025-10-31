@@ -112,6 +112,7 @@ typedef struct{
 	I2C_HandleTypeDef *hi2c;
 	uint8_t I2CAddress;
 	uint16_t RawAngle;
+	uint16_t Angle;
 	uint64_t AbsolutePosition;
 
 	AS5600Status_Typedef Status;
@@ -123,6 +124,7 @@ typedef struct{
 
 AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,uint8_t i2cAddr);
 void AS5600_ReadRawAngle(AS5600Handle_Typedef *pAS);
+void AS5600_ReadAngle(AS5600Handle_Typedef *pAS);
 void AS5600_UpdateStatus(AS5600Handle_Typedef *pAS);
 
 #endif /* INC_AS5600DRIVER_H_ */

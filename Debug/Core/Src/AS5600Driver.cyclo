@@ -1,3 +1,4 @@
 ../Core/Src/AS5600Driver.c:11:23:AS5600_Create	2
 ../Core/Src/AS5600Driver.c:30:6:AS5600_ReadRawAngle	1
-../Core/Src/AS5600Driver.c:40:6:AS5600_UpdateStatus	1
+../Core/Src/AS5600Driver.c:38:6:AS5600_ReadAngle	1
+../Core/Src/AS5600Driver.c:47:6:AS5600_UpdateStatus	1
