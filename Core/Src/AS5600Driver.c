@@ -88,13 +88,12 @@ eInfo AS5600_Configure(AS5600Handle_Typedef *pAS,
 	temp[0] = (uint8_t)(0x00FF & (temp16_t >> 8));
 	temp[1] = (uint8_t)(0x00FF & temp16_t);
 
-	HAL_StatusTypeDef stat;
+	HAL_StatusTypeDef status;
+	status = HAL_I2C_Mem_Write(pAS->hi2c, (pAS->I2CAddress << 1), AS5600_REGISTER_CONF_HIGH, I2C_MEMADD_SIZE_8BIT, temp, 2, 1000);
 
-	stat = HAL_I2C_Mem_Write(pAS->hi2c, (pAS->I2CAddress << 1), AS5600_REGISTER_CONF_HIGH, I2C_MEMADD_SIZE_8BIT, temp, 2, 1000);
-
-	if (stat != HAL_OK)
+	if (status != HAL_OK)
 	{
-		while(1);
+		return AS5600_I2C_COMM_ERROR;
 	}
 
 	return AS5600_OK;
@@ -116,7 +115,14 @@ eInfo AS5600_UpdateStatus(AS5600Handle_Typedef *pAS)
 	}
 
 	uint8_t temp[1];
-	HAL_I2C_Mem_Read(pAS->hi2c, (pAS->I2CAddress << 1), AS5600_REGISTER_STATUS, I2C_MEMADD_SIZE_8BIT, temp, 1, 1000);
+
+	HAL_StatusTypeDef status;
+	status = HAL_I2C_Mem_Read(pAS->hi2c, (pAS->I2CAddress << 1), AS5600_REGISTER_STATUS, I2C_MEMADD_SIZE_8BIT, temp, 1, 1000);
+
+	if (status != HAL_OK)
+	{
+		return AS5600_I2C_COMM_ERROR;
+	}
 
 	pAS->Status.MagnetTooStrong = 0x0001 & (temp[0] >> AS5600_MH_BITSHIFT);
 	pAS->Status.MagnetTooWeak 	= 0x0001 & (temp[0] >> AS5600_ML_BITSHIFT);
@@ -146,7 +152,14 @@ eInfo AS5600_ReadRawAngle_I2C(AS5600Handle_Typedef *pAS)
 	}
 
 	uint8_t temp[2];
-	HAL_I2C_Mem_Read(pAS->hi2c, (pAS->I2CAddress << 1), AS5600_REGISTER_RAW_ANGLE_HIGH, I2C_MEMADD_SIZE_8BIT, temp, 2, 1000);
+
+	HAL_StatusTypeDef status;
+	status = HAL_I2C_Mem_Read(pAS->hi2c, (pAS->I2CAddress << 1), AS5600_REGISTER_RAW_ANGLE_HIGH, I2C_MEMADD_SIZE_8BIT, temp, 2, 1000);
+
+	if (status != HAL_OK)
+	{
+		return AS5600_I2C_COMM_ERROR;
+	}
 
 	pAS->RawAngle = 0x0FFF & ((temp[0] << 8) & temp[1]);
 
@@ -174,8 +187,14 @@ eInfo AS5600_ReadAngle_I2C(AS5600Handle_Typedef *pAS)
 	}
 
 	uint8_t temp[2];
-	HAL_I2C_Mem_Read(pAS->hi2c, (pAS->I2CAddress << 1), AS5600_REGISTER_ANGLE_HIGH, I2C_MEMADD_SIZE_8BIT, temp, 2, 1000);
 
+	HAL_StatusTypeDef status;
+	status = HAL_I2C_Mem_Read(pAS->hi2c, (pAS->I2CAddress << 1), AS5600_REGISTER_ANGLE_HIGH, I2C_MEMADD_SIZE_8BIT, temp, 2, 1000);
+
+	if(status != HAL_OK)
+	{
+		return AS5600_I2C_COMM_ERROR;
+	}
 	pAS->Angle = 0x0FFF & ((temp[0] << 8) | temp[1]);
 
 	return AS5600_OK;
@@ -199,18 +218,64 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS)
 		return AS5600_NULL_POINTER;
 	}
 
+	if(pAS->Config.OutputStage != PWM)
+	{
+		return AS5600_PWM_MODE_NOT_INITIALIZED;
+	}
+
 	uint32_t CCR1_Value;
 	uint32_t CCR2_Value;
-	uint32_t PWMFreq;
-	float DutyCycle;
 
 	CCR1_Value = HAL_TIM_ReadCapturedValue(pAS->htim, TIM_CHANNEL_1);
 	CCR2_Value = HAL_TIM_ReadCapturedValue(pAS->htim, TIM_CHANNEL_2);
 
-	//HAL_RCC_GetSysClockFreq();
+	if(CCR1_Value == 0)
+	{
+		return AS5600_DEVIDE_BY_ZERO;
+	}
 
+
+	uint32_t PWMFreq;
 	PWMFreq = 48000000 / (CCR1_Value);
+	switch(pAS->Config.PWMFrequency)
+	{
+	case _115Hz:
+		if(PWMFreq > 130 || PWMFreq < 100)
+		{
+			return AS5600_INPUT_PWM_FREQ_ERROR;
+		}
+		break;
+
+	case _230Hz:
+		if(PWMFreq > 260 || PWMFreq < 200)
+		{
+			return AS5600_INPUT_PWM_FREQ_ERROR;
+		}
+		break;
+
+	case _460Hz:
+		if(PWMFreq > 510 || PWMFreq < 410)
+		{
+			return AS5600_INPUT_PWM_FREQ_ERROR;
+		}
+		break;
+
+	case _920Hz:
+		if(PWMFreq > 1020 || PWMFreq < 820)
+		{
+			return AS5600_INPUT_PWM_FREQ_ERROR;
+		}
+		break;
+	}
+
+
+
+	float DutyCycle;
 	DutyCycle = ((float)CCR2_Value/(float)CCR1_Value) * 100.0f;
+
+
+
+	//HAL_RCC_GetSysClockFreq();
 
 	return AS5600_OK;
 
