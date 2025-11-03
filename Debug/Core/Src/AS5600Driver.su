@@ -1,4 +1,6 @@
-../Core/Src/AS5600Driver.c:11:23:AS5600_Create	24	static
-../Core/Src/AS5600Driver.c:30:6:AS5600_ReadRawAngle	48	static
-../Core/Src/AS5600Driver.c:38:6:AS5600_ReadAngle	48	static
-../Core/Src/AS5600Driver.c:47:6:AS5600_UpdateStatus	48	static
+../Core/Src/AS5600Driver.c:22:23:AS5600_Create	32	static
+../Core/Src/AS5600Driver.c:54:7:AS5600_Configure	56	static
+../Core/Src/AS5600Driver.c:111:7:AS5600_UpdateStatus	48	static
+../Core/Src/AS5600Driver.c:141:7:AS5600_ReadRawAngle_I2C	48	static
+../Core/Src/AS5600Driver.c:169:7:AS5600_ReadAngle_I2C	48	static
+../Core/Src/AS5600Driver.c:195:7:AS5600_ReadAngle_PWM	40	static

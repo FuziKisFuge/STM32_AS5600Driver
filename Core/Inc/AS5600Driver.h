@@ -68,27 +68,68 @@
 #define 	AS5600_ML_BIT_MASK	0b00010000
 #define 	AS5600_MH_BIT_MASK	0b00001000
 
-typedef struct
-{
-  __IO uint8_t ZMCO;
-  __IO uint8_t ZPOS2;
-  __IO uint8_t ZPOS1;
-  __IO uint8_t MPOS2;
-  __IO uint8_t MPOS1;
-  __IO uint8_t MANG2;
-  __IO uint8_t MANG1;
-  __IO uint8_t CONF2;
-  __IO uint8_t CONF1;
-  __IO uint8_t RAW_ANGLE2;
-  __IO uint8_t RAW_ANGLE1;
-  __IO uint8_t ANGLE2;
-  __IO uint8_t ANGLE1;
-  __IO uint8_t STATUS;
-  __IO uint8_t AGC;
-  __IO uint8_t MAGNITUDE2;
-  __IO uint8_t MAGNITUDE1;
-  __IO uint8_t BURN;
-} AS5600Register_TypeDef;
+typedef enum{
+	AS5600_OK,
+	AS5600_NULL_POINTER,
+	AS5600_I2C_COMM_ERROR,
+	AS5600_INPUT_PWM_FREQ_ERROR,
+	AS5600_INPUT_PWM_DUTYCYCLE_ERROR,
+	AS5600_DEVIDE_BY_ZERO,
+
+
+	AS5600_OTHER_ERROR,
+}eInfo;
+
+typedef enum{
+	NOM = 0,
+	LPM1 = 1,
+	LPM2 = 2,
+	LPM3 = 3
+}eConf_PowerMode;
+
+typedef enum{
+	OFF = 0,
+	LSB1 = 1,
+	LSB2 = 2,
+	LSB3 = 3
+}eConf_Hysteresis;
+
+typedef enum{
+	AnalogFullRange = 0,
+	AnalogReducedRange = 1,
+	PWM = 2
+}eConf_OutputStage;
+
+typedef enum{
+	_115Hz = 0,
+	_230Hz = 1,
+	_460Hz = 2,
+	_920Hz = 3
+}eConf_PWMFrequency;
+
+typedef enum{
+	_16x = 0,
+	_8x = 1,
+	_4x = 2,
+	_2x = 3
+}eConf_SlowFilter;
+
+typedef enum{
+	SlowFilterOnly = 0,
+	LSB6 = 1,
+	LSB7 = 2,
+	LSB9 = 3,
+	LSB18 = 4,
+	LSB21 = 5,
+	LSB24 = 6,
+	LSB10 = 7
+}eConf_FastFilterThreshold;
+
+typedef enum{
+	Off = 0,
+	On = 1,
+}eConf_Watchdog;
+
 
 typedef struct{
 	uint8_t MagnetTooStrong;
@@ -98,18 +139,19 @@ typedef struct{
 }AS5600Status_Typedef;
 
 typedef struct{
-	uint8_t PowerMode;
-	uint8_t Hysteresis;
-	uint8_t OutputStage;
-	uint8_t PWMFrequency;
-	uint8_t SlowFilter;
-	uint8_t FastFilterTreshold;
-	uint8_t Watchdog;
+	eConf_PowerMode PowerMode;
+	eConf_Hysteresis Hysteresis;
+	eConf_OutputStage OutputStage;
+	eConf_PWMFrequency PWMFrequency;
+	eConf_SlowFilter SlowFilter;
+	eConf_FastFilterThreshold FastFilterTreshold;
+	eConf_Watchdog Watchdog;
 
 }AS5600Config_Typedef;
 
 typedef struct{
 	I2C_HandleTypeDef *hi2c;
+	TIM_HandleTypeDef *htim;
 	uint8_t I2CAddress;
 	uint16_t RawAngle;
 	uint16_t Angle;
@@ -122,9 +164,21 @@ typedef struct{
 
 
 
-AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,uint8_t i2cAddr);
-void AS5600_ReadRawAngle(AS5600Handle_Typedef *pAS);
-void AS5600_ReadAngle(AS5600Handle_Typedef *pAS);
-void AS5600_UpdateStatus(AS5600Handle_Typedef *pAS);
+AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
+									TIM_HandleTypeDef *htim,
+									uint8_t i2cAddr);
+eInfo AS5600_Configure(AS5600Handle_Typedef *pAS,
+							eConf_PowerMode PM,
+							eConf_Hysteresis HYST,
+							eConf_OutputStage OUTS,
+							eConf_PWMFrequency PWMF,
+							eConf_SlowFilter SF,
+							eConf_FastFilterThreshold FTH,
+							eConf_Watchdog WD);
+eInfo AS5600_UpdateStatus(AS5600Handle_Typedef *pAS);
+
+eInfo AS5600_ReadRawAngle_I2C(AS5600Handle_Typedef *pAS);
+eInfo AS5600_ReadAngle_I2C(AS5600Handle_Typedef *pAS);
+eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS);
 
 #endif /* INC_AS5600DRIVER_H_ */

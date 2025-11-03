@@ -25,7 +25,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "AS5600Driver.h"
+#include "uartcomm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,20 +92,34 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
-  MX_TIM3_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
-  Encoder1 = AS5600_Create(&hi2c1, 0x36);
+
+  Encoder1 = AS5600_Create(&hi2c1, &htim2, 0x36);
   if (Encoder1 == NULL)
   {
 	  while(1);
   }
 
-  AS5600_ReadRawAngle(Encoder1);
+  AS5600_Configure(Encoder1,
+  		  	  	  	  NOM,
+  					  OFF,
+  					  PWM,
+  					  _115Hz,
+  					  _16x,
+  					  SlowFilterOnly,
+  					  Off);
+
+  AS5600_ReadRawAngle_I2C(Encoder1);
 
   AS5600_UpdateStatus(Encoder1);
 
+
   uart_printf(&huart1, "%d , %d", (uint16_t)Encoder1->RawAngle, (uint8_t)Encoder1->Status.MagnetDetected);
+
+  HAL_TIM_IC_Start(&htim2, TIM_CHANNEL_1);
+  HAL_TIM_IC_Start(&htim2, TIM_CHANNEL_2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -112,10 +127,8 @@ int main(void)
   while (1)
   {
 
-	  AS5600_ReadAngle(Encoder1);
-	  uart_printf("%d", Encoder1->Angle);
+	  AS5600_ReadAngle_PWM(Encoder1);
 
-	  HAL_GPIO_TogglePin(GPIOC, LD3_Pin);
 	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
