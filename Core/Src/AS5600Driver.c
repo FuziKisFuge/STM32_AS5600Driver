@@ -17,6 +17,7 @@
   * @retval
   */
 AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
+									TIM_HandleTypeDef *htim,
 									uint8_t i2cAddr,
 									float MaxAngle,
 									float MinAngle)
@@ -40,20 +41,34 @@ AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
 	}
 
 	AS5600Handle_Typedef *pAS = (AS5600Handle_Typedef *)calloc(1, sizeof(AS5600Handle_Typedef));
-
 	if (pAS == NULL)
 	{
 		printf("calloc fail");
 		return NULL;
 	}
 
-	pAS->htim = (TIM_HandleTypeDef *)calloc(1, sizeof(TIM_HandleTypeDef));
+
 
 	if (pAS->htim == NULL)
 	{
-		printf("calloc fail");
-		return NULL;
+		pAS->htim = (TIM_HandleTypeDef *)calloc(1, sizeof(TIM_HandleTypeDef));
+		if (pAS->htim == NULL)
+		{
+			printf("calloc fail");
+			return NULL;
+		}
 	}
+	else
+	{
+		pAS->htim = htim;
+		//memset(pAS->htim->Instance, 0, (sizeof(pAS->htim->Instance)));
+		if(pAS->htim->Instance == TIM2)
+		{
+			__HAL_RCC_TIM2_FORCE_RESET();
+		}
+	}
+
+
 
 
 	pAS->hi2c = hi2c;
@@ -319,8 +334,32 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS)
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+/**
+  * @brief
+  *
+  * @param
+  *
+  * @retval
+  */
 eInfo AS5600_UpdateAbsolutePosition(AS5600Handle_Typedef *pAS)
 {
+	if(pAS == NULL)
+	{
+		return AS5600_NULL_POINTER;
+	}
+
+
 	float LowLimit = pAS->MinAngle + 60.0f;
 	float HighLimit = pAS->MaxAngle - 60.0f;
 
@@ -388,7 +427,7 @@ eInfo AS5600_UpdateAbsolutePosition(AS5600Handle_Typedef *pAS)
 float MapDutycycle2Angle(float Duty, float AngleMin, float AngleMax)
 {
 	//float MinVal = 2.9418f;			// 128 high clock/all clock = 128/4351
-	//float MaxVal = 97.0519f;		//100.0f - MinVal
+	//float MaxVal = 97.0519f;			//100.0f - MinVal
 
 	//
 	float PosVal = Duty - (DUTYCYCLE_128_CLOCK);			//Offset

@@ -95,8 +95,6 @@ typedef enum{
 	AS5600_INPUT_PWM_FREQ_ERROR,
 	AS5600_INPUT_PWM_DUTYCYCLE_ERROR,
 	AS5600_DEVIDE_BY_ZERO,
-	AS5600_INVALID_MAX_ANGLE,
-	AS5600_INVALID_MIN_ANGLE,
 
 
 	AS5600_OTHER_ERROR,
@@ -198,6 +196,7 @@ typedef struct{
 
 
 AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
+									TIM_HandleTypeDef *htim,
 									uint8_t i2cAddr,
 									float MaxAngle,
 									float MinAngle);

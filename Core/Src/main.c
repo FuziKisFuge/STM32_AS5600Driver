@@ -97,7 +97,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-  Encoder1 = AS5600_Create(&hi2c1, 0x36, 360.0f, 0.0f);
+  Encoder1 = AS5600_Create(&hi2c1,
+		  	  	  	  	  	  NULL,
+		  	  	  	  	  	  0x36,
+							  360.0f,
+							  0.0f);
   if (Encoder1 == NULL)
   {
 	  while(1);
