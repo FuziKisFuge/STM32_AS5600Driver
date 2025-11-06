@@ -17,8 +17,28 @@
   * @retval
   */
 AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
-									uint8_t i2cAddr)
+									uint8_t i2cAddr,
+									float MaxAngle,
+									float MinAngle)
 {
+	if(MaxAngle > 360.0f)
+	{
+		printf("Invalid max angle");
+		return NULL;
+	}
+
+	if(MaxAngle < 0.0f)
+	{
+		printf("Invalid min angle");
+		return NULL;
+	}
+
+	if(MinAngle > MaxAngle)
+	{
+		printf("Invalid min/max angle");
+		return NULL;
+	}
+
 	AS5600Handle_Typedef *pAS = (AS5600Handle_Typedef *)calloc(1, sizeof(AS5600Handle_Typedef));
 
 	if (pAS == NULL)
@@ -38,6 +58,8 @@ AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
 
 	pAS->hi2c = hi2c;
 	pAS->I2CAddress = i2cAddr;
+	pAS->MaxAngle = MaxAngle;
+	pAS->MinAngle = MinAngle;
 
 
 	return pAS;
@@ -287,7 +309,8 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS)
 	float DutyCycle;
 	DutyCycle = ((float)CCR2_Value/(float)CCR1_Value) * 100.0f;
 
-	pAS->Angle = MapDutycycle2Angle(DutyCycle, 0.0f, 360.0f);
+	pAS->LastAngle = pAS->Angle;
+	pAS->Angle = MapDutycycle2Angle(DutyCycle, pAS->MinAngle, pAS->MaxAngle);
 
 	//HAL_RCC_GetSysClockFreq();
 
@@ -295,6 +318,59 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS)
 
 }
 
+
+eInfo AS5600_UpdateAbsolutePosition(AS5600Handle_Typedef *pAS)
+{
+	float LowLimit = pAS->MinAngle + 60.0f;
+	float HighLimit = pAS->MaxAngle - 60.0f;
+
+	switch(pAS->State)
+	{
+	case Wait:
+		if(pAS->Angle > HighLimit)
+		{
+			pAS->State = WatchForOverflow;
+		}
+		else if(pAS->Angle < LowLimit)
+		{
+			pAS->State = WatchForUnderflow;
+		}
+
+		break;
+
+	case WatchForOverflow:
+		if(pAS->Angle < LowLimit)
+		{
+			pAS->FullRotationCounter ++;
+			pAS->State = WatchForUnderflow;
+		}
+		else if(pAS->Angle > LowLimit && pAS->Angle < HighLimit)
+		{
+			pAS->State = Wait;
+		}
+
+		break;
+
+	case WatchForUnderflow:
+			if(pAS->Angle > HighLimit)
+			{
+				pAS->FullRotationCounter --;
+				pAS->State = WatchForOverflow;
+			}
+			else if(pAS->Angle > LowLimit && pAS->Angle < HighLimit)
+			{
+				pAS->State = Wait;
+			}
+
+			break;
+	}
+
+	pAS->AbsolutePosition = (pAS->FullRotationCounter * pAS->MaxAngle) + pAS->Angle;
+
+
+
+	return AS5600_OK;
+}
 
 
 

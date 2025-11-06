@@ -1,7 +1,8 @@
-../Core/Src/AS5600Driver.c:19:23:AS5600_Create	3
-../Core/Src/AS5600Driver.c:61:7:AS5600_Configure	4
-../Core/Src/AS5600Driver.c:124:7:AS5600_UpdateStatus	3
-../Core/Src/AS5600Driver.c:161:7:AS5600_ReadRawAngle_I2C	3
-../Core/Src/AS5600Driver.c:196:7:AS5600_ReadAngle_I2C	3
-../Core/Src/AS5600Driver.c:228:7:AS5600_ReadAngle_PWM	18
-../Core/Src/AS5600Driver.c:312:7:MapDutycycle2Angle	1
+../Core/Src/AS5600Driver.c:19:23:AS5600_Create	6
+../Core/Src/AS5600Driver.c:83:7:AS5600_Configure	4
+../Core/Src/AS5600Driver.c:146:7:AS5600_UpdateStatus	3
+../Core/Src/AS5600Driver.c:183:7:AS5600_ReadRawAngle_I2C	3
+../Core/Src/AS5600Driver.c:218:7:AS5600_ReadAngle_I2C	3
+../Core/Src/AS5600Driver.c:250:7:AS5600_ReadAngle_PWM	18
+../Core/Src/AS5600Driver.c:322:7:AS5600_UpdateAbsolutePosition	13
+../Core/Src/AS5600Driver.c:388:7:MapDutycycle2Angle	1

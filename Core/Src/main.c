@@ -97,7 +97,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-  Encoder1 = AS5600_Create(&hi2c1, 0x36);
+  Encoder1 = AS5600_Create(&hi2c1, 0x36, 360.0f, 0.0f);
   if (Encoder1 == NULL)
   {
 	  while(1);
@@ -127,8 +127,9 @@ int main(void)
   {
 
 	  AS5600_ReadAngle_PWM(Encoder1);
+	  AS5600_UpdateAbsolutePosition(Encoder1);
 
-	  HAL_Delay(1000);
+	  //HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

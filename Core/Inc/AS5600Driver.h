@@ -95,6 +95,8 @@ typedef enum{
 	AS5600_INPUT_PWM_FREQ_ERROR,
 	AS5600_INPUT_PWM_DUTYCYCLE_ERROR,
 	AS5600_DEVIDE_BY_ZERO,
+	AS5600_INVALID_MAX_ANGLE,
+	AS5600_INVALID_MIN_ANGLE,
 
 
 	AS5600_OTHER_ERROR,
@@ -150,6 +152,12 @@ typedef enum{
 	On = 1,
 }eConf_Watchdog;
 
+typedef enum{
+	Wait,
+	WatchForOverflow,
+	WatchForUnderflow,
+}RotationStateMachine;
+
 
 typedef struct{
 	uint8_t MagnetTooStrong;
@@ -173,9 +181,14 @@ typedef struct{
 	I2C_HandleTypeDef *hi2c;
 	TIM_HandleTypeDef *htim;
 	uint8_t I2CAddress;
+	float MaxAngle;
+	float MinAngle;
 	uint16_t RawAngle;
-	uint16_t Angle;
-	uint64_t AbsolutePosition;
+	float Angle;
+	float LastAngle;
+	int64_t FullRotationCounter;
+	float AbsolutePosition;
+	RotationStateMachine State;
 
 	AS5600Status_Typedef Status;
 	AS5600Config_Typedef Config;
@@ -185,7 +198,9 @@ typedef struct{
 
 
 AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
-									uint8_t i2cAddr);
+									uint8_t i2cAddr,
+									float MaxAngle,
+									float MinAngle);
 eInfo AS5600_Configure(AS5600Handle_Typedef *pAS,
 							eConf_PowerMode PM,
 							eConf_Hysteresis HYST,
@@ -199,6 +214,7 @@ eInfo AS5600_UpdateStatus(AS5600Handle_Typedef *pAS);
 eInfo AS5600_ReadRawAngle_I2C(AS5600Handle_Typedef *pAS);
 eInfo AS5600_ReadAngle_I2C(AS5600Handle_Typedef *pAS);
 eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS);
+eInfo AS5600_UpdateAbsolutePosition(AS5600Handle_Typedef *pAS);
 
 
 float MapDutycycle2Angle(float Duty, float AngleMin, float AngleMax);
