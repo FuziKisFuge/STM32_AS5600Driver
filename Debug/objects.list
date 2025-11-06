@@ -1,4 +1,5 @@
 "./Core/Src/AS5600Driver.o"
+"./Core/Src/AS5600PeripheralInit.o"
 "./Core/Src/gpio.o"
 "./Core/Src/i2c.o"
 "./Core/Src/main.o"

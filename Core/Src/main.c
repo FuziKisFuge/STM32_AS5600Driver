@@ -15,6 +15,7 @@
   *
   ******************************************************************************
   */
+
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -92,11 +93,11 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
-  MX_TIM2_Init();
+  MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
 
 
-  Encoder1 = AS5600_Create(&hi2c1, &htim2, 0x36);
+  Encoder1 = AS5600_Create(&hi2c1, 0x36);
   if (Encoder1 == NULL)
   {
 	  while(1);
@@ -118,8 +119,6 @@ int main(void)
 
   uart_printf(&huart1, "%d , %d", (uint16_t)Encoder1->RawAngle, (uint8_t)Encoder1->Status.MagnetDetected);
 
-  HAL_TIM_IC_Start(&htim2, TIM_CHANNEL_1);
-  HAL_TIM_IC_Start(&htim2, TIM_CHANNEL_2);
   /* USER CODE END 2 */
 
   /* Infinite loop */

@@ -5,6 +5,8 @@
  *      Author: Z440
  */
 
+
+
 #ifndef INC_AS5600DRIVER_H_
 #define INC_AS5600DRIVER_H_
 
@@ -22,15 +24,26 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+
+
+
 #if defined(STM32F091xC) || defined(STM32F098xx) || defined(STM32F042x6) || defined(STM32F048xx) || \
     defined(STM32F030x6) || defined(STM32F031x6) || defined(STM32F038xx) || defined(STM32F070x6) || \
     defined(STM32F070xB) || defined(STM32F030x6) || defined(STM32F051x8)
 
 
 #include "stm32f0xx_hal.h"
-
+#include "stm32f0xx_hal_tim.h"
+#include "stm32f0xx_hal_tim.h"
+#include "stm32f0xx_hal_tim_ex.h"
+#include "stm32f0xx_hal_conf.h"
 
 #endif
+
+#ifndef HAL_TIM_MODULE_ENABLED
+#define HAL_TIM_MODULE_ENABLED
+#endif
+
 
 //Regiszter címek
 #define AS5600_REGISTER_ZMCO 0x00
@@ -172,7 +185,6 @@ typedef struct{
 
 
 AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
-									TIM_HandleTypeDef *htim,
 									uint8_t i2cAddr);
 eInfo AS5600_Configure(AS5600Handle_Typedef *pAS,
 							eConf_PowerMode PM,
@@ -190,5 +202,12 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS);
 
 
 float MapDutycycle2Angle(float Duty, float AngleMin, float AngleMax);
+
+
+
+//--------------PERIPHERAL----------------
+void AS5600_TimerInit(AS5600Handle_Typedef *pAS);
+void AS5600_ErrorHandler();
+
 
 #endif /* INC_AS5600DRIVER_H_ */

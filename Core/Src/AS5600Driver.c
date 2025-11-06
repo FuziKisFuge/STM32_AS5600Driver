@@ -9,9 +9,6 @@
 #include "AS5600Driver.h"
 
 
-
-
-
 /**
   * @brief
   *
@@ -20,7 +17,6 @@
   * @retval
   */
 AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
-									TIM_HandleTypeDef *htim,
 									uint8_t i2cAddr)
 {
 	AS5600Handle_Typedef *pAS = (AS5600Handle_Typedef *)calloc(1, sizeof(AS5600Handle_Typedef));
@@ -31,13 +27,24 @@ AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
 		return NULL;
 	}
 
+	pAS->htim = (TIM_HandleTypeDef *)calloc(1, sizeof(TIM_HandleTypeDef));
+
+	if (pAS->htim == NULL)
+	{
+		printf("calloc fail");
+		return NULL;
+	}
+
+
 	pAS->hi2c = hi2c;
-	pAS->htim = htim;
 	pAS->I2CAddress = i2cAddr;
 
 
 	return pAS;
 }
+
+
+
 
 
 
@@ -72,6 +79,13 @@ eInfo AS5600_Configure(AS5600Handle_Typedef *pAS,
 	pAS->Config.SlowFilter = SF;
 	pAS->Config.FastFilterTreshold = FTH;
 	pAS->Config.Watchdog = WD;
+
+	if (pAS->Config.OutputStage == PWM)
+	{
+		AS5600_TimerInit(pAS);
+		HAL_TIM_IC_Start(pAS->htim, TIM_CHANNEL_1);
+		HAL_TIM_IC_Start(pAS->htim, TIM_CHANNEL_2);
+	}
 
 	uint16_t temp16_t = 0;
 
