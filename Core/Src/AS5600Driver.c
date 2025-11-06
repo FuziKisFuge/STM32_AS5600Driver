@@ -273,7 +273,7 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS)
 	float DutyCycle;
 	DutyCycle = ((float)CCR2_Value/(float)CCR1_Value) * 100.0f;
 
-
+	pAS->Angle = MapDutycycle2Angle(DutyCycle, 0.0f, 360.0f);
 
 	//HAL_RCC_GetSysClockFreq();
 
@@ -288,10 +288,26 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS)
 
 
 
-
+/**
+  * @brief
+  *
+  * @param
+  *
+  * @retval
+  */
 float MapDutycycle2Angle(float Duty, float AngleMin, float AngleMax)
 {
+	//float MinVal = 2.9418f;			// 128 high clock/all clock = 128/4351
+	//float MaxVal = 97.0519f;		//100.0f - MinVal
 
+	//
+	float PosVal = Duty - (DUTYCYCLE_128_CLOCK);			//Offset
+	PosVal = PosVal * (100.0f / DUTYCYCLE_4095_CLOCK);		//Scale
+	PosVal = PosVal / 100.0f;								//Normalize
+
+
+	float PosAngle = (PosVal * (AngleMax - AngleMin)) + AngleMin;
+	return PosAngle;
 }
 
 

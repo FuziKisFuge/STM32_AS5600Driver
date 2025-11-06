@@ -68,6 +68,12 @@
 #define 	AS5600_ML_BIT_MASK	0b00010000
 #define 	AS5600_MH_BIT_MASK	0b00001000
 
+
+
+//Egyéb define
+#define DUTYCYCLE_128_CLOCK 2.9418524477f  // 128/4351
+#define DUTYCYCLE_4095_CLOCK 94.1162951f	//4095/4351
+
 typedef enum{
 	AS5600_OK,
 	AS5600_NULL_POINTER,
@@ -181,5 +187,8 @@ eInfo AS5600_UpdateStatus(AS5600Handle_Typedef *pAS);
 eInfo AS5600_ReadRawAngle_I2C(AS5600Handle_Typedef *pAS);
 eInfo AS5600_ReadAngle_I2C(AS5600Handle_Typedef *pAS);
 eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS);
+
+
+float MapDutycycle2Angle(float Duty, float AngleMin, float AngleMax);
 
 #endif /* INC_AS5600DRIVER_H_ */
