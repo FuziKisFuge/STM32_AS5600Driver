@@ -25,18 +25,21 @@ AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
 	if(MaxAngle > 360.0f)
 	{
 		printf("Invalid max angle");
+		AS5600_ERROR_HANDLE_CALLBACK(NULL, AS5600_INVALID_MAX_ANGLE);
 		return NULL;
 	}
 
 	if(MaxAngle < 0.0f)
 	{
 		printf("Invalid min angle");
+		AS5600_ERROR_HANDLE_CALLBACK(NULL, AS5600_INVALID_MIN_ANGLE);
 		return NULL;
 	}
 
 	if(MinAngle > MaxAngle)
 	{
 		printf("Invalid min/max angle");
+		AS5600_ERROR_HANDLE_CALLBACK(NULL, AS5600_INVALID_MIN_MAX_ANGLE);
 		return NULL;
 	}
 
@@ -44,6 +47,7 @@ AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
 	if (pAS == NULL)
 	{
 		printf("calloc fail");
+		AS5600_ERROR_HANDLE_CALLBACK(NULL, AS5600_CALLOC_FAIL);
 		return NULL;
 	}
 
@@ -55,6 +59,7 @@ AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
 		if (pAS->htim == NULL)
 		{
 			printf("calloc fail");
+			AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_CALLOC_FAIL);
 			return NULL;
 		}
 	}
@@ -64,7 +69,12 @@ AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
 		//memset(pAS->htim->Instance, 0, (sizeof(pAS->htim->Instance)));
 		if(pAS->htim->Instance == TIM2)
 		{
+			//Reset the pheripherial if already initialized
 			__HAL_RCC_TIM2_FORCE_RESET();
+			//Wait some time
+			HAL_Delay(5);
+			//Release the reset bit
+			__HAL_RCC_TIM2_RELEASE_RESET();
 		}
 	}
 
@@ -106,6 +116,7 @@ eInfo AS5600_Configure(AS5600Handle_Typedef *pAS,
 {
 	if(pAS == NULL)
 	{
+		AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_NULL_POINTER);
 		return AS5600_NULL_POINTER;
 	}
 
@@ -144,6 +155,7 @@ eInfo AS5600_Configure(AS5600Handle_Typedef *pAS,
 
 	if (status != HAL_OK)
 	{
+		AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_I2C_COMM_ERROR);
 		return AS5600_I2C_COMM_ERROR;
 	}
 
@@ -162,6 +174,7 @@ eInfo AS5600_UpdateStatus(AS5600Handle_Typedef *pAS)
 {
 	if(pAS == NULL)
 	{
+		AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_NULL_POINTER);
 		return AS5600_NULL_POINTER;
 	}
 
@@ -172,6 +185,7 @@ eInfo AS5600_UpdateStatus(AS5600Handle_Typedef *pAS)
 
 	if (status != HAL_OK)
 	{
+		AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_I2C_COMM_ERROR);
 		return AS5600_I2C_COMM_ERROR;
 	}
 
@@ -199,6 +213,7 @@ eInfo AS5600_ReadRawAngle_I2C(AS5600Handle_Typedef *pAS)
 {
 	if(pAS == NULL)
 	{
+		AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_NULL_POINTER);
 		return AS5600_NULL_POINTER;
 	}
 
@@ -209,6 +224,7 @@ eInfo AS5600_ReadRawAngle_I2C(AS5600Handle_Typedef *pAS)
 
 	if (status != HAL_OK)
 	{
+		AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_I2C_COMM_ERROR);
 		return AS5600_I2C_COMM_ERROR;
 	}
 
@@ -234,6 +250,7 @@ eInfo AS5600_ReadAngle_I2C(AS5600Handle_Typedef *pAS)
 {
 	if(pAS == NULL)
 	{
+		AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_NULL_POINTER);
 		return AS5600_NULL_POINTER;
 	}
 
@@ -244,6 +261,7 @@ eInfo AS5600_ReadAngle_I2C(AS5600Handle_Typedef *pAS)
 
 	if(status != HAL_OK)
 	{
+		AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_I2C_COMM_ERROR);
 		return AS5600_I2C_COMM_ERROR;
 	}
 	pAS->Angle = 0x0FFF & ((temp[0] << 8) | temp[1]);
@@ -266,11 +284,13 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS)
 {
 	if(pAS == NULL)
 	{
+		AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_NULL_POINTER);
 		return AS5600_NULL_POINTER;
 	}
 
 	if(pAS->Config.OutputStage != PWM)
 	{
+		AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_PWM_MODE_NOT_INITIALIZED);
 		return AS5600_PWM_MODE_NOT_INITIALIZED;
 	}
 
@@ -282,6 +302,7 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS)
 
 	if(CCR1_Value == 0)
 	{
+		AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_DEVIDE_BY_ZERO);
 		return AS5600_DEVIDE_BY_ZERO;
 	}
 
@@ -293,6 +314,7 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS)
 	case _115Hz:
 		if(PWMFreq > 130 || PWMFreq < 100)
 		{
+			AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_INPUT_PWM_FREQ_ERROR);
 			return AS5600_INPUT_PWM_FREQ_ERROR;
 		}
 		break;
@@ -300,6 +322,7 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS)
 	case _230Hz:
 		if(PWMFreq > 260 || PWMFreq < 200)
 		{
+			AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_INPUT_PWM_FREQ_ERROR);
 			return AS5600_INPUT_PWM_FREQ_ERROR;
 		}
 		break;
@@ -307,6 +330,7 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS)
 	case _460Hz:
 		if(PWMFreq > 510 || PWMFreq < 410)
 		{
+			AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_INPUT_PWM_FREQ_ERROR);
 			return AS5600_INPUT_PWM_FREQ_ERROR;
 		}
 		break;
@@ -314,6 +338,7 @@ eInfo AS5600_ReadAngle_PWM(AS5600Handle_Typedef *pAS)
 	case _920Hz:
 		if(PWMFreq > 1020 || PWMFreq < 820)
 		{
+			AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_INPUT_PWM_FREQ_ERROR);
 			return AS5600_INPUT_PWM_FREQ_ERROR;
 		}
 		break;
@@ -356,6 +381,7 @@ eInfo AS5600_UpdateAbsolutePosition(AS5600Handle_Typedef *pAS)
 {
 	if(pAS == NULL)
 	{
+		AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_NULL_POINTER);
 		return AS5600_NULL_POINTER;
 	}
 
@@ -437,6 +463,79 @@ float MapDutycycle2Angle(float Duty, float AngleMin, float AngleMax)
 
 	float PosAngle = (PosVal * (AngleMax - AngleMin)) + AngleMin;
 	return PosAngle;
+}
+
+
+
+
+
+
+
+
+
+
+/**
+  * @brief
+  *
+  * @param
+  *
+  * @retval
+  */
+__attribute__((weak)) void AS5600_ErrorHandler(AS5600Handle_Typedef *pAS, eInfo error)
+{
+	switch(error)
+	{
+	case AS5600_OK:
+		while(1);
+		break;
+
+	case AS5600_NULL_POINTER:
+		while(1);
+		break;
+
+	case AS5600_CALLOC_FAIL:
+		while(1);
+		break;
+
+	case AS5600_I2C_COMM_ERROR:
+		while(1);
+		break;
+
+	case AS5600_PWM_MODE_NOT_INITIALIZED:
+		while(1);
+		break;
+
+	case AS5600_INPUT_PWM_FREQ_ERROR:
+		while(1);
+		break;
+
+
+	case AS5600_INPUT_PWM_DUTYCYCLE_ERROR:
+		while(1);
+		break;
+
+	case AS5600_DEVIDE_BY_ZERO:
+		while(1);
+		break;
+
+	case AS5600_INVALID_MAX_ANGLE:
+		while(1);
+		break;
+
+	case AS5600_INVALID_MIN_ANGLE:
+		while(1);
+		break;
+
+	case AS5600_INVALID_MIN_MAX_ANGLE:
+		while(1);
+		break;
+
+	case AS5600_OTHER_ERROR:
+		while(1);
+		break;
+
+
+	}
 }
 
 

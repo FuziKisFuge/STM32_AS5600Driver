@@ -1,5 +1,5 @@
 Core/Src/AS5600PeripheralInit.o: ../Core/Src/AS5600PeripheralInit.c \
- ../Core/Inc/AS5600Driver.h \
+ ../Core/Inc/AS5600Driver.h ../Core/Inc/AS5600Driver_Config.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h \
  ../Core/Inc/stm32f0xx_hal_conf.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_rcc.h \
@@ -32,6 +32,7 @@ Core/Src/AS5600PeripheralInit.o: ../Core/Src/AS5600PeripheralInit.c \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h \
  ../Core/Inc/stm32f0xx_hal_conf.h
 ../Core/Inc/AS5600Driver.h:
+../Core/Inc/AS5600Driver_Config.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h:
 ../Core/Inc/stm32f0xx_hal_conf.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_rcc.h:

@@ -10,6 +10,8 @@
 #ifndef INC_AS5600DRIVER_H_
 #define INC_AS5600DRIVER_H_
 
+#include "AS5600Driver_Config.h"
+
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -40,12 +42,14 @@
 
 #endif
 
-#ifndef HAL_TIM_MODULE_ENABLED
-#define HAL_TIM_MODULE_ENABLED
+#if (config_USE_ERROR_HANDLING == 1)
+#define AS5600_ERROR_HANDLE_CALLBACK(x, y) 		AS5600_ErrorHandler((x), (y))
+#else
+#define AS5600_ERROR_HANDLE_CALLBACK(x, y)
 #endif
 
 
-//Regiszter címek
+//Register adresses
 #define AS5600_REGISTER_ZMCO 0x00
 #define AS5600_REGISTER_ZPOS_HIGH 0x01
 #define AS5600_REGISTER_ZPOS_LOW 0x02
@@ -67,12 +71,12 @@
 #define AS5600_REGISTER_MAGNITUDE_LOW 0x1C
 #define AS5600_REGISTER_BURN 0xFF
 
-//Bit poziciók
+//Bit pos
 #define AS5600_MD_BITSHIFT	5
 #define AS5600_ML_BITSHIFT	4
 #define AS5600_MH_BITSHIFT	3
 
-//Bitmaszkok
+//Bitmasks
 #define 	AS5600_RAW_ANGLE_UPPER_8_BIT_MASK	0b00001111
 #define 	AS5600_RAW_ANGLE_LOWER_8_BIT_MASK	0b11111111
 #define		AS5600_RAW_ANGLE_16_BIT_MASK		0b0000111111111111
@@ -83,18 +87,22 @@
 
 
 
-//Egyéb define
+//Dutycycle defines
 #define DUTYCYCLE_128_CLOCK 2.9418524477f  // 128/4351
 #define DUTYCYCLE_4095_CLOCK 94.1162951f	//4095/4351
 
 typedef enum{
 	AS5600_OK,
 	AS5600_NULL_POINTER,
+	AS5600_CALLOC_FAIL,
 	AS5600_I2C_COMM_ERROR,
 	AS5600_PWM_MODE_NOT_INITIALIZED,
 	AS5600_INPUT_PWM_FREQ_ERROR,
 	AS5600_INPUT_PWM_DUTYCYCLE_ERROR,
 	AS5600_DEVIDE_BY_ZERO,
+	AS5600_INVALID_MAX_ANGLE,
+	AS5600_INVALID_MIN_ANGLE,
+	AS5600_INVALID_MIN_MAX_ANGLE,
 
 
 	AS5600_OTHER_ERROR,
@@ -217,12 +225,13 @@ eInfo AS5600_UpdateAbsolutePosition(AS5600Handle_Typedef *pAS);
 
 
 float MapDutycycle2Angle(float Duty, float AngleMin, float AngleMax);
-
+void AS5600_ErrorHandler(AS5600Handle_Typedef *pAS, eInfo error);
 
 
 //--------------PERIPHERAL----------------
 void AS5600_TimerInit(AS5600Handle_Typedef *pAS);
-void AS5600_ErrorHandler();
+void AS5600_Peripherial_ErrorHandler();
+
 
 
 #endif /* INC_AS5600DRIVER_H_ */

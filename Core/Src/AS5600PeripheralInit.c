@@ -24,7 +24,7 @@ void AS5600_TimerInit(AS5600Handle_Typedef *pAS)
   pAS->htim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_IC_Init(pAS->htim) != HAL_OK)
   {
-	  AS5600_ErrorHandler();
+	  AS5600_Peripherial_ErrorHandler();
   }
   sSlaveConfig.SlaveMode = TIM_SLAVEMODE_RESET;
   sSlaveConfig.InputTrigger = TIM_TS_TI1FP1;
@@ -33,7 +33,7 @@ void AS5600_TimerInit(AS5600Handle_Typedef *pAS)
   sSlaveConfig.TriggerFilter = 0;
   if (HAL_TIM_SlaveConfigSynchro(pAS->htim, &sSlaveConfig) != HAL_OK)
   {
-	  AS5600_ErrorHandler();
+	  AS5600_Peripherial_ErrorHandler();
   }
   sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
   sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
@@ -41,19 +41,19 @@ void AS5600_TimerInit(AS5600Handle_Typedef *pAS)
   sConfigIC.ICFilter = 0;
   if (HAL_TIM_IC_ConfigChannel(pAS->htim, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
   {
-	  AS5600_ErrorHandler();
+	  AS5600_Peripherial_ErrorHandler();
   }
   sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_FALLING;
   sConfigIC.ICSelection = TIM_ICSELECTION_INDIRECTTI;
   if (HAL_TIM_IC_ConfigChannel(pAS->htim, &sConfigIC, TIM_CHANNEL_2) != HAL_OK)
   {
-	  AS5600_ErrorHandler();
+	  AS5600_Peripherial_ErrorHandler();
   }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(pAS->htim, &sMasterConfig) != HAL_OK)
   {
-	  AS5600_ErrorHandler();
+	  AS5600_Peripherial_ErrorHandler();
   }
   /* USER CODE BEGIN TIM2_Init 2 */
 
@@ -117,11 +117,10 @@ void HAL_TIM_IC_MspDeInit(TIM_HandleTypeDef* tim_icHandle)
 
 
 
-void AS5600_ErrorHandler()
+void AS5600_Peripherial_ErrorHandler()
 {
-	while(1);
-}
 
+}
 
 
 
