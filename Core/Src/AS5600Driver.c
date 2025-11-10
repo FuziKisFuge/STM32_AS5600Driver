@@ -16,8 +16,8 @@
   *
   * @retval
   */
-AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
-									TIM_HandleTypeDef *htim,
+AS5600Handle_Typedef *AS5600_Create(//I2C_HandleTypeDef *hi2c,
+									//TIM_HandleTypeDef *htim,
 									uint8_t i2cAddr,
 									float MaxAngle,
 									float MinAngle)
@@ -52,14 +52,15 @@ AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
 	}
 
 
-
-	if (pAS->htim == NULL)
+	/*
+	if (htim == NULL)
 	{
 		pAS->htim = (TIM_HandleTypeDef *)calloc(1, sizeof(TIM_HandleTypeDef));
 		if (pAS->htim == NULL)
 		{
+			free(pAS);
 			printf("calloc fail");
-			AS5600_ERROR_HANDLE_CALLBACK(pAS, AS5600_CALLOC_FAIL);
+			AS5600_ERROR_HANDLE_CALLBACK(NULL, AS5600_CALLOC_FAIL);
 			return NULL;
 		}
 	}
@@ -81,7 +82,9 @@ AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
 
 
 
+
 	pAS->hi2c = hi2c;
+	*/
 	pAS->I2CAddress = i2cAddr;
 	pAS->MaxAngle = MaxAngle;
 	pAS->MinAngle = MinAngle;
@@ -91,6 +94,48 @@ AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
 }
 
 
+
+
+
+
+
+
+/**
+  * @brief
+  *
+  * @param
+  *
+  * @retval
+  */
+eInfo AS5600_AttachPeripheral (AS5600Handle_Typedef *pAS,
+									I2C_HandleTypeDef *hi2c,
+									TIM_HandleTypeDef *htim)
+{
+	if (htim != NULL)
+	{
+		pAS->htim = htim;
+		//memset(pAS->htim->Instance, 0, (sizeof(pAS->htim->Instance)));
+		if(pAS->htim->Instance == TIM2)
+		{
+			//Reset the pheripherial if already initialized
+			__HAL_RCC_TIM2_FORCE_RESET();
+			//Wait some time
+			HAL_Delay(5);
+			//Release the reset bit
+			__HAL_RCC_TIM2_RELEASE_RESET();
+
+			HAL_Delay(5);
+
+			AS5600_TimerInit(pAS);
+		}
+	}
+
+	if (hi2c != NULL)
+	{
+		pAS->hi2c = hi2c;
+	}
+	return AS5600_OK;
+}
 
 
 
@@ -130,7 +175,7 @@ eInfo AS5600_Configure(AS5600Handle_Typedef *pAS,
 
 	if (pAS->Config.OutputStage == PWM)
 	{
-		AS5600_TimerInit(pAS);
+		//AS5600_TimerInit(pAS);
 		HAL_TIM_IC_Start(pAS->htim, TIM_CHANNEL_1);
 		HAL_TIM_IC_Start(pAS->htim, TIM_CHANNEL_2);
 	}
@@ -452,13 +497,11 @@ eInfo AS5600_UpdateAbsolutePosition(AS5600Handle_Typedef *pAS)
   */
 float MapDutycycle2Angle(float Duty, float AngleMin, float AngleMax)
 {
-	//float MinVal = 2.9418f;			// 128 high clock/all clock = 128/4351
-	//float MaxVal = 97.0519f;			//100.0f - MinVal
 
-	//
-	float PosVal = Duty - (DUTYCYCLE_128_CLOCK);			//Offset
-	PosVal = PosVal * (100.0f / DUTYCYCLE_4095_CLOCK);		//Scale
-	PosVal = PosVal / 100.0f;								//Normalize
+
+	float PosVal = Duty - (DUTYCYCLE_128_CLOCK);			//Offset (-2.941)
+	PosVal = PosVal * (100.0f / DUTYCYCLE_4095_CLOCK);		//Scale (0-94.116 -> 0-100)
+	PosVal = PosVal / 100.0f;								//Normalize (0-100 -> 0-1)
 
 
 	float PosAngle = (PosVal * (AngleMax - AngleMin)) + AngleMin;
@@ -506,7 +549,7 @@ __attribute__((weak)) void AS5600_ErrorHandler(AS5600Handle_Typedef *pAS, eInfo 
 		break;
 
 	case AS5600_INPUT_PWM_FREQ_ERROR:
-		while(1);
+		//while(1);
 		break;
 
 

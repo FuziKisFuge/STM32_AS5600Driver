@@ -10,4 +10,5 @@
 
 #define config_USE_ERROR_HANDLING	1
 
+
 #endif /* INC_AS5600DRIVER_CONFIG_H_ */

@@ -203,11 +203,14 @@ typedef struct{
 
 
 
-AS5600Handle_Typedef *AS5600_Create(I2C_HandleTypeDef *hi2c,
-									TIM_HandleTypeDef *htim,
+AS5600Handle_Typedef *AS5600_Create(//I2C_HandleTypeDef *hi2c,
+									//TIM_HandleTypeDef *htim,
 									uint8_t i2cAddr,
 									float MaxAngle,
 									float MinAngle);
+eInfo AS5600_AttachPeripheral (AS5600Handle_Typedef *pAS,
+									I2C_HandleTypeDef *hi2c,
+									TIM_HandleTypeDef *htim);
 eInfo AS5600_Configure(AS5600Handle_Typedef *pAS,
 							eConf_PowerMode PM,
 							eConf_Hysteresis HYST,

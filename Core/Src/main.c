@@ -93,15 +93,17 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
-  MX_TIM17_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
 
-  Encoder1 = AS5600_Create(&hi2c1,
-		  	  	  	  	  	  NULL,
-		  	  	  	  	  	  0x36,
-							  360.0f,
+  Encoder1 = AS5600_Create(0x36,
+						  	  360.0f,
 							  0.0f);
+
+  AS5600_AttachPeripheral(Encoder1,
+		  	  	  	  	  &hi2c1,
+						  &htim2);
   if (Encoder1 == NULL)
   {
 	  while(1);

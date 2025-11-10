@@ -16,7 +16,7 @@ void AS5600_TimerInit(AS5600Handle_Typedef *pAS)
   TIM_IC_InitTypeDef sConfigIC = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
 
-  pAS->htim->Instance = TIM2;
+  //pAS->htim->Instance = TIM2;
   pAS->htim->Init.Prescaler = 0;
   pAS->htim->Init.CounterMode = TIM_COUNTERMODE_UP;
   pAS->htim->Init.Period = 4294967295;
@@ -61,7 +61,7 @@ void AS5600_TimerInit(AS5600Handle_Typedef *pAS)
 
 }
 
-void HAL_TIM_IC_MspInit(TIM_HandleTypeDef* tim_icHandle)
+__attribute__((weak)) void HAL_TIM_IC_MspInit(TIM_HandleTypeDef* tim_icHandle)
 {
 
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -90,7 +90,7 @@ void HAL_TIM_IC_MspInit(TIM_HandleTypeDef* tim_icHandle)
   }
 }
 
-void HAL_TIM_IC_MspDeInit(TIM_HandleTypeDef* tim_icHandle)
+__attribute__((weak)) void HAL_TIM_IC_MspDeInit(TIM_HandleTypeDef* tim_icHandle)
 {
 
   if(tim_icHandle->Instance==TIM2)

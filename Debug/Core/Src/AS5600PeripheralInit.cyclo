@@ -1,6 +1,6 @@
 ../Core/Src/AS5600PeripheralInit.c:12:6:AS5600_TimerInit	6
-../Core/Src/AS5600PeripheralInit.c:64:6:HAL_TIM_IC_MspInit	2
-../Core/Src/AS5600PeripheralInit.c:93:6:HAL_TIM_IC_MspDeInit	2
+../Core/Src/AS5600PeripheralInit.c:64:28:HAL_TIM_IC_MspInit	2
+../Core/Src/AS5600PeripheralInit.c:93:28:HAL_TIM_IC_MspDeInit	2
 ../Core/Src/AS5600PeripheralInit.c:120:6:AS5600_Peripherial_ErrorHandler	1
 ../Core/Src/AS5600PeripheralInit.c:153:41:HAL_TIM_IC_Init	3
 ../Core/Src/AS5600PeripheralInit.c:209:32:HAL_TIM_ReadCapturedValue	7
