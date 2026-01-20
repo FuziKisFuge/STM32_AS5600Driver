@@ -1,0 +1,30 @@
+!SESSION 2026-01-20 12:46:21.488 -----------------------------------------------
+eclipse.buildId=Version 1.16.0
+java.version=17.0.11
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=hu_HU
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -data C:\Users\Z440\Documents\STM32Projects\STM32_AS5600Driver\Example
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2026-01-20 12:46:28.265
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-01-20 12:46:28.277
+!MESSAGE Log4j2 initialized with config file C:\Users\Z440\Documents\STM32Projects\STM32_AS5600Driver\Example\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-01-20 12:46:36.098
+!MESSAGE Started RMI Server, listening on port 41337
+!SESSION 2026-01-20 12:49:19.155 -----------------------------------------------
+eclipse.buildId=Version 1.16.0
+java.version=17.0.11
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=hu_HU
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -data C:\Users\Z440\Documents\STM32Projects\STM32_AS5600Driver\Example
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2026-01-20 12:49:26.094
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-01-20 12:49:26.096
+!MESSAGE Log4j2 initialized with config file C:\Users\Z440\Documents\STM32Projects\STM32_AS5600Driver\Example\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-01-20 12:49:34.469
+!MESSAGE Started RMI Server, listening on port 41337
