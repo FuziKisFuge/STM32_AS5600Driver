@@ -7,6 +7,8 @@ Egyszerű, light-weight AS5600 mágneses abszolút enkóder driver STM32 mikroko
 ## Függőségek
 
 - STM HAL
+   - HAL_TIM
+   - HAL_I2C
 
 ---
 
