@@ -23,7 +23,13 @@ Egyszerű, light-weight AS5600 mágneses abszolút enkóder driver STM32 mikroko
 
 ---
 
-## Támogatott funkciók
+## Funkció áttekintés
+
+| |Támogatott|Nem támogatott|
+|Szöghelyzet lekérdezés| I2C, PWM, | Analóg|
+|Pozició| Abszolút szöghelyzet számontartása | Szögsebesség számontartása|
+| Hibakezelés | - | - |
+
 
 - Szöghelyzet lekérdezése
   - I2C-vel
