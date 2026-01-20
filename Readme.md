@@ -30,6 +30,14 @@ Egyszerű, light-weight AS5600 mágneses abszolút enkóder driver STM32 mikroko
 |Szöghelyzet lekérdezés| I2C, PWM, | Analóg|
 |Pozició| Abszolút szöghelyzet számontartása | Szögsebesség számontartása|
 | Hibakezelés | - | - |
+|Státusz lekérdezés | Magnet too strong, Magnet too weak, Magnet detected | - |
+|Konfigurálás | - Power mode   | Burn (minimum és maximum szögtartomány állítása) |
+                 - Hysteresis
+                 - Output stage
+                 - PWM Frequency
+                 - Slow filter
+                 - FF Treshold
+                 - Watchdog
 
 
 - Szöghelyzet lekérdezése
